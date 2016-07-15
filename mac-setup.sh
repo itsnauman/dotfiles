@@ -159,3 +159,18 @@ packages=(
 for pkg in $packages; do
 	pip install $pkg 1>/dev/null
 done
+
+#########################
+# -- npm installs -- #
+#########################
+
+packages=(
+	nodemon
+	torrent
+	trash-cli
+	babel-cli
+)
+
+for pkg in $packages; do
+	npm install $pkg 1>/dev/null
+done
