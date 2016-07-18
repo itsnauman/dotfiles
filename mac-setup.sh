@@ -138,6 +138,9 @@ defaults write com.apple.terminal StringEncodings -array 4
 defaults write com.apple.Terminal "Default Window Settings" -string "Pro"
 defaults write com.apple.Terminal "Startup Window Settings" -string "Pro"
 
+# Disable Dashboard
+defaults write com.apple.dashboard mcx-disabled -bool true
+
 # Gen RSA Key if needed
 if [[ ! -f $HOME/.ssh/id_rsa ]]; then
 	ssh-keygen -t rsa -C "nauman-ahmad@outlook.com"
