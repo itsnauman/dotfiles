@@ -93,6 +93,8 @@ for pkg in $packages; do
   fi
 done
 
+brew cleanup
+
 ###################
 # -- Git Setup -- #
 ###################
