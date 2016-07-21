@@ -147,7 +147,11 @@ if [[ ! -f $HOME/.ssh/id_rsa ]]; then
 	chmod 600 $HOME/.ssh/id_rsa
 fi
 
-echo "Instaling oh my zsh..."
+# Install Vundle for vim
+echo "Installing Vundle... 🐰"
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+echo "Instaling oh my zsh... 🚀"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 #########################
