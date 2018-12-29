@@ -6,7 +6,7 @@
 "
 
 "*****************************************************************************
-"" Plugin Install 
+"" Plugin Install
 "*****************************************************************************
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -15,9 +15,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'jelera/vim-javascript-syntax'
-Plugin 'scrooloose/syntastic'
-Plugin 'Valloric/YouCompleteMe'
+Plugin 'w0rp/ale'
 Plugin 'ervandew/supertab'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'tpope/vim-sensible'
@@ -30,8 +28,11 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'chriskempson/base16-vim'
 Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'tomtom/tcomment_vim'
 Plugin 'bronson/vim-trailing-whitespace' " FLAG
-
+Plugin 'rakr/vim-one'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'Valloric/YouCompleteMe'
 call vundle#end()
 
 "*****************************************************************************
@@ -55,8 +56,8 @@ set softtabstop=0
 set shiftwidth=4
 set expandtab
 
-"" Map leader to ,
-let mapleader='\<Space>'
+"" Map leader to <space>
+let mapleader = " "
 
 "" Enable hidden buffers
 set hidden
@@ -92,13 +93,15 @@ syntax on
 set ruler
 set number
 
-set guifont=consolas:h13
+set guifont=Consolas:h12
+
 set term=xterm-256color
 set t_Co=256
 set guioptions=egmrti
 set mousemodel=popup
 
-colorscheme flattr
+colorscheme one
+set background=dark
 
 if &term =~ '256color'
   set t_ut=
@@ -136,6 +139,7 @@ let g:airline_skip_empty_sections = 1
 
 " Show just the filename
 let g:airline#extensions#tabline#fnamemod = ':t'
+let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 
 "*****************************************************************************
 "" Abbreviations
@@ -174,6 +178,7 @@ augroup vimrc-remember-cursor-position
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
+
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
@@ -181,19 +186,16 @@ augroup END
 noremap <Leader>h :<C-u>split<CR>
 noremap <Leader>v :<C-u>vsplit<CR>
 
+" Move around splits
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
 "" Tabs
 nnoremap <Tab> gt
 nnoremap <S-Tab> gT
 nnoremap <silent> <S-t> :tabnew<CR>
-
-" syntastic
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_error_symbol='✗'
-let g:syntastic_warning_symbol='⚠'
-let g:syntastic_style_error_symbol = '✗'
-let g:syntastic_style_warning_symbol = '⚠'
-let g:syntastic_auto_loc_list=1
-let g:syntastic_aggregate_errors = 1
 
 " The following commands make the navigation keys work like standard editors
 imap <silent> <down> <c-o>gj
@@ -202,6 +204,9 @@ nmap <silent> <down> gj
 
 " make jj do esc"
 inoremap jj <Esc>
+
+" Clear search pattern on hitting return
+nnoremap <CR> :noh<CR><CR>
 
 " To open a new empty buffer
 " This replaces :tabnew which I used to bind to this mapping
@@ -213,6 +218,17 @@ nmap <leader>l :bnext<CR>
 " Move to the previous buffer
 nmap <leader>h :bprevious<CR>
 
+" CtrlP Plugin Settings
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
 "*****************************************************************************
 "" Custom configs
 "*****************************************************************************
@@ -223,6 +239,9 @@ autocmd FileType cpp setlocal tabstop=4 shiftwidth=4 expandtab
 " html
 " for html files, 2 spaces
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
+
+" Remove trailing whitespace on save
+autocmd BufWritePre * :FixWhitespace
 
 " javascript
 let g:javascript_enable_domhtmlcss = 1
@@ -243,9 +262,6 @@ augroup vimrc-python
       \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 augroup END
 
-" syntastic
-let g:syntastic_python_checkers=['python', 'flake8']
-
 " vim-airline
 let g:airline#extensions#virtualenv#enabled = 1
 
@@ -254,19 +270,22 @@ let g:airline#extensions#virtualenv#enabled = 1
 let g:polyglot_disabled = ['python']
 let python_highlight_all = 1
 
-" Commenting blocks of code.
-autocmd FileType c,cpp,java,scala,javascript let b:comment_leader = '// '
-autocmd FileType sh,ruby,python   let b:comment_leader = '# '
-autocmd FileType conf,fstab       let b:comment_leader = '# '
-autocmd FileType tex              let b:comment_leader = '% '
-autocmd FileType mail             let b:comment_leader = '> '
-autocmd FileType vim              let b:comment_leader = '" '
-noremap <silent> ,cc :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
-noremap <silent> ,cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
-
 "*****************************************************************************
 "" Convenience variables
 "*****************************************************************************
+
+" Set this. Airline will handle the rest.
+let g:airline#extensions#ale#enabled = 1
+
+" Write this in your vimrc file
+let g:ale_lint_on_text_changed = 'never'
+" You can disable this option too
+" if you don't want linters to run on opening a file
+let g:ale_lint_on_enter = 0
+
+" Enable ESLint only for JavaScript.
+let b:ale_linters = ['eslint']
+let g:ale_fixers = {'javascript': ['prettier']}
 
 " vim-airline
 if !exists('g:airline_symbols')
