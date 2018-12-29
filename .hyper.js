@@ -63,11 +63,17 @@ module.exports = {
     // default: `true` on Linux, `true` on Windows, ignored on macOS
     showHamburgerMenu: '',
 
+    // set to `false` (without backticks and without quotes) if you want to hide the minimize, maximize and close buttons
+    // additionally, set to `'left'` if you want them on the left, like in Ubuntu
+    // default: `true` (without backticks and without quotes) on Windows and Linux, ignored on macOS
     showWindowControls: '',
 
     // custom padding (CSS format, i.e.: `top right bottom left`)
     padding: '12px 14px',
 
+    // the full list. if you're going to provide the full color palette,
+    // including the 6 x 6 color cubes and the grayscale map, just provide
+    // an array here instead of a color map object
     colors: {
       black: '#000000',
       red: '#C51E14',
@@ -129,7 +135,17 @@ module.exports = {
     // for advanced config flags please refer to https://hyper.is/#cfg
   },
 
+  // a list of plugins to fetch and install from npm
+  // format: [@org/]project[#version]
+  // examples:
+  //   `hyperpower`
+  //   `@company/project`
+  //   `project#1.0.1`
   plugins: ['hyperterm-one-dark', 'hyperline', 'hyper-opacity', 'hyperterm-paste', 'hyper-pane'],
+
+  // in development, you can create a directory under
+  // `~/.hyper_plugins/local/` and include it here
+  // to load it and avoid it being `npm install`ed
   localPlugins: [],
 
   keymaps: {
