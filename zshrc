@@ -1,5 +1,5 @@
 # Plugin Setup
-plugins=(git, autojump, sublime)
+plugin=(git, autojump, sublime)
 
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/naumanahmad/.oh-my-zsh
@@ -8,10 +8,10 @@ export ZSH=/Users/naumanahmad/.oh-my-zsh
 set TERM xterm-256color; export TERM
 
 # default editor
-export EDITOR="sublime"
+export EDITOR="subl"
 
 # Set name of the theme to load.
-ZSH_THEME="cloud"
+ZSH_THEME="bira"
 
 # Change how often to auto-update (in days).
 export UPDATE_ZSH_DAYS=7
@@ -34,11 +34,8 @@ export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='subl'
+  export EDITOR='vim'
 fi
-
-# ssh
-export SSH_KEY_PATH="~/.ssh/dsa_id"
 
 # autojump export
 [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
@@ -47,8 +44,10 @@ export SSH_KEY_PATH="~/.ssh/dsa_id"
 alias zshconfig="mvim ~/.zshrc"
 alias ohmyzsh="mvim ~/.oh-my-zsh"
 alias cl="clear"
-alias SimpleServer='open http://localhost:8000; python -m SimpleHTTPServer'
+alias del="trash"
+alias vim="mvim"
 
+# Go back n directories
 function back {
   num=$1
   while [ $num -ne 0  ];do
@@ -57,6 +56,28 @@ function back {
   done
 }
 
+# Kill process running on port
+function killp {
+    kill -9 $(lsof -i :@ | awk '{l=$2} END {print l}')
+}
+
+function ubuntu() {
+    docker run -v /Users/naumanahmad/Developer:/home/devuser/workspace --rm -it ubuntu:nauman
+}
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# heroku autocomplete setup
+HEROKU_AC_ZSH_SETUP_PATH=/Users/naumanahmad/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+
+export WORKON_HOME=$HOME/.virtualenvs
+
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+source /usr/local/bin/virtualenvwrapper.sh
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export SSH_KEY_PATH="~/.ssh/dsa_id"
+export TZ=UTC
