@@ -5,10 +5,6 @@
 "                       (_)_/ |_|_| |_| |_|_|  \___|
 "
 
-"*****************************************************************************
-"" Plugin Install
-"*****************************************************************************
-
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
@@ -33,6 +29,11 @@ Plugin 'bronson/vim-trailing-whitespace' " FLAG
 Plugin 'rakr/vim-one'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'itchyny/lightline.vim'
+Plugin 'hhvm/vim-hack'
+Plugin 'sonph/onehalf'
+Plugin 'ap/vim-buftabline'
+
 call vundle#end()
 
 "*****************************************************************************
@@ -158,7 +159,7 @@ cnoreabbrev Qall qall
 
 "" NERDTree configuration
 let g:NERDTreeChDirMode=2
-let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
+let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__', 'node_modules']
 let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
 let g:NERDTreeShowBookmarks=1
 let g:nerdtree_tabs_focus_on_files=1
@@ -192,11 +193,6 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-"" Tabs
-nnoremap <Tab> gt
-nnoremap <S-Tab> gT
-nnoremap <silent> <S-t> :tabnew<CR>
-
 " The following commands make the navigation keys work like standard editors
 imap <silent> <down> <c-o>gj
 imap <silent> <up> <c-o>gk
@@ -208,15 +204,11 @@ inoremap jj <Esc>
 " Clear search pattern on hitting return
 nnoremap <CR> :noh<CR><CR>
 
-" To open a new empty buffer
-" This replaces :tabnew which I used to bind to this mapping
-nmap <leader>n :enew<cr>
-
-" Move to the next buffer
-nmap <leader>l :bnext<CR>
-
-" Move to the previous buffer
-nmap <leader>h :bprevious<CR>
+" Tab for the next one, Shift-Tab for the previous one.
+" To quickly close a buffer, I use Ctrl-X
+nnoremap <Tab> :bnext<CR>
+nnoremap <S-Tab> :bprevious<CR>
+nnoremap <silent> <C-X> :bdelete<CR>
 
 " CtrlP Plugin Settings
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
@@ -270,10 +262,6 @@ let g:airline#extensions#virtualenv#enabled = 1
 let g:polyglot_disabled = ['python']
 let python_highlight_all = 1
 
-"*****************************************************************************
-"" Convenience variables
-"*****************************************************************************
-
 " Set this. Airline will handle the rest.
 let g:airline#extensions#ale#enabled = 1
 
@@ -283,42 +271,11 @@ let g:ale_lint_on_text_changed = 'never'
 " if you don't want linters to run on opening a file
 let g:ale_lint_on_enter = 0
 
-" Enable ESLint only for JavaScript.
-let b:ale_linters = ['eslint']
-let g:ale_fixers = {'javascript': ['prettier']}
+" Setup ALE for hack lang
+let g:ale_linters = { 'hack': ['hack', 'hhast'] }
+let b:ale_fixers = {'javascript': ['prettier', 'eslint']}
 
-" vim-airline
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
+" Set this variable to 1 to fix files when you save them.
+let g:ale_fix_on_save = 1
 
-if !exists('g:airline_powerline_fonts')
-  let g:airline#extensions#tabline#left_sep = ' '
-  let g:airline#extensions#tabline#left_alt_sep = '|'
-  let g:airline_left_sep          = '▶'
-  let g:airline_left_alt_sep      = '»'
-  let g:airline_right_sep         = '◀'
-  let g:airline_right_alt_sep     = '«'
-  let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
-  let g:airline#extensions#readonly#symbol   = '⊘'
-  let g:airline#extensions#linecolumn#prefix = '¶'
-  let g:airline#extensions#paste#symbol      = 'ρ'
-  let g:airline_symbols.linenr    = '␊'
-  let g:airline_symbols.branch    = '⎇'
-  let g:airline_symbols.paste     = 'ρ'
-  let g:airline_symbols.paste     = 'Þ'
-  let g:airline_symbols.paste     = '∥'
-  let g:airline_symbols.whitespace = 'Ξ'
-else
-  let g:airline#extensions#tabline#left_sep = ''
-  let g:airline#extensions#tabline#left_alt_sep = ''
-
-  " powerline symbols
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
-  let g:airline_symbols.branch = ''
-  let g:airline_symbols.readonly = ''
-  let g:airline_symbols.linenr = ''
-endif
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git|dist\'
